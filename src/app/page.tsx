@@ -13,8 +13,9 @@ import FooterSection from '@/components/footer-section'
 import InteractiveHeroBottle from '@/components/interactive-hero-bottle'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ShieldCheck, Truck, Calendar, Sparkles, MessageCircle } from 'lucide-react'
+import { ShieldCheck, Truck, Calendar, Sparkles, MessageCircle, Droplets, Waves } from 'lucide-react'
 import { useLanguage } from '@/context/language'
+import WatlysPatternHover from '@/components/watlys-pattern-hover'
 
 export default function Home() {
   const { t } = useLanguage()
@@ -145,9 +146,6 @@ export default function Home() {
 
       {/* SECTION 05 — WATER INSIGHTS / NEWSLETTER */}
       <KnowledgeSeries />
-
-      {/* SECTION 06 — TRUSTED BY CLIENTS */}
-      <TrustSection />
 
       {/* SECTION 07 — CERTIFICATIONS / QUALITY */}
       <CertificationsSection />

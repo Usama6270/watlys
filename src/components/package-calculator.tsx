@@ -92,7 +92,14 @@ export default function PackageCalculator() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
         
         {/* LEFT PANEL: INTERACTIVE CONTROLS (Span 6) */}
-        <div className="lg:col-span-6 bg-zinc-50/80 dark:bg-[#111111] p-8 sm:p-10 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 space-y-8 shadow-sm">
+        <div className="relative overflow-hidden lg:col-span-6 bg-zinc-50/80 dark:bg-[#111111] p-8 sm:p-10 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 space-y-8 shadow-sm">
+          {/* Subtle Configurator Texture Layer (Patterns-02.png) */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center mix-blend-multiply dark:mix-blend-screen opacity-10 dark:opacity-15 transition-opacity duration-300 rounded-2xl z-0"
+            style={{
+              backgroundImage: `url('/patterns/Patterns-02.png'), url('/Patterns-02.png')`,
+            }}
+          />
           
           {/* Variable 1: Number of Bottles */}
           <div className="space-y-3">
@@ -211,7 +218,14 @@ export default function PackageCalculator() {
         </div>
 
         {/* RIGHT PANEL: LIVE RESULT CARD (Span 6) */}
-        <div className="lg:col-span-6 bg-white dark:bg-[#0E0E0E] p-8 sm:p-10 rounded-2xl border-2 border-[#0064D0] shadow-xl flex flex-col justify-between space-y-6">
+        <div className="relative overflow-hidden lg:col-span-6 bg-white dark:bg-[#0E0E0E] p-8 sm:p-10 rounded-2xl border-2 border-[#0064D0] shadow-xl flex flex-col justify-between space-y-6">
+          {/* Subtle Configurator Texture Layer (Patterns-02.png) */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center mix-blend-multiply dark:mix-blend-screen opacity-10 dark:opacity-15 transition-opacity duration-300 rounded-2xl z-0"
+            style={{
+              backgroundImage: `url('/patterns/Patterns-02.png'), url('/Patterns-02.png')`,
+            }}
+          />
           <div className="space-y-6">
             <div className="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-4">
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#0064D0]">
