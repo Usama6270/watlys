@@ -30,12 +30,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning
     >
       <head>
-        <link rel="preload" href="/patterns/pattern-01.svg" as="image" />
-        <link rel="preload" href="/patterns/pattern-02.svg" as="image" />
-        <link rel="preload" href="/patterns/pattern-03.svg" as="image" />
-        <link rel="preload" href="/patterns/pattern-04.svg" as="image" />
-        <link rel="preload" href="/patterns/pattern-05.svg" as="image" />
-        <link rel="preload" href="/patterns/pattern-06.svg" as="image" />
+        {/* Preconnect for external assets to accelerate DNS & TLS handshakes */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://cdn.sanity.io" />
       </head>
       <body
         className="min-h-full flex flex-col bg-[#FAF9F6] dark:bg-[#0a1128] text-slate-900 dark:text-[#FAFAFA] font-sans transition-colors duration-300"
@@ -48,6 +45,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 {children}
                 <SanityLive />
                 {isDraftMode && <VisualEditing />}
+                <Script id="tawk-to" strategy="lazyOnload">
+                  {`
+                    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+                    (function(){
+                      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+                      s1.async=true;
+                      s1.src='https://embed.tawk.to/6aa06c225914873442c8ff55/1k21acq8d';
+                      s1.charset='UTF-8';
+                      s1.setAttribute('crossorigin','*');
+                      s0.parentNode.insertBefore(s1,s0);
+                    })();
+                  `}
+                </Script>
               </CartProvider>
             </AuthProvider>
           </LanguageProvider>
