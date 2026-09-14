@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingBag, Menu, X, ChevronDown, MessageCircle, ArrowRight, Sparkles } from 'lucide-react'
+import { ShoppingBag, Menu, X, ChevronDown, MessageCircle, ArrowRight, Sparkles, User } from 'lucide-react'
 import { useCart } from '@/context/cart'
+import { useAuth } from '@/context/auth'
 import { useLanguage } from '@/context/language'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
@@ -13,6 +14,7 @@ import WatlysPatternHover from '@/components/watlys-pattern-hover'
 
 export default function Navbar() {
   const { cart } = useCart()
+  const { user, openAuthModal } = useAuth()
   const { language, setLanguage, t, isRtl } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -263,13 +265,34 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* Utility Group: Animated LanguageToggle Pill | Dark Mode | Cart */}
+            {/* Utility Group: Animated LanguageToggle Pill | Dark Mode | Cart | Account */}
             <div className={`relative z-50 flex items-center gap-3 pointer-events-auto ${isRtl ? 'flex-row-reverse' : ''}`}>
               {/* Language Selector Pill Toggle */}
               <LanguageToggle />
 
               {/* Dark Mode Icon */}
               <ThemeToggle />
+
+              {/* Account Portal or Sign In Trigger */}
+              {user ? (
+                <Link
+                  href="/account"
+                  aria-label="Customer Account"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#0064D0]/10 text-[#0064D0] hover:bg-[#0064D0] hover:text-white transition-all text-xs font-bold"
+                >
+                  <User size={15} />
+                  <span className="max-w-[80px] truncate">{user.fullName.split(' ')[0]}</span>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('login')}
+                  aria-label="Sign In"
+                  className="p-1.5 rounded-full text-zinc-600 hover:text-zinc-950 dark:text-slate-200 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  <User size={17} />
+                </button>
+              )}
 
               {/* Cart / Bag Icon */}
               <Link

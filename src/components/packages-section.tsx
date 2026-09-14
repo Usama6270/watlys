@@ -5,9 +5,12 @@ import Link from 'next/link'
 import { Check, Star, Sparkles, Droplets } from 'lucide-react'
 
 import PricingCard3D from '@/components/PricingCard3D'
+import { useAuth } from '@/context/auth'
 
 export default function PackagesSection() {
+  const { user, openAuthModal } = useAuth()
   const [frequency, setFrequency] = useState<'weekly' | 'monthly' | 'annual'>('monthly')
+
 
   // Pricing calculations
   const studentPrice = frequency === 'weekly' ? 'PKR 350' : frequency === 'monthly' ? 'PKR 1,200' : 'PKR 12,000'
@@ -88,12 +91,22 @@ export default function PackagesSection() {
             </div>
 
             <div className="pt-8" style={{ transform: 'translateZ(20px)' }}>
-              <Link
-                href="/order?plan=student"
-                className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-md group-hover:bg-[#0064D0] group-hover:text-white"
-              >
-                Choose Plan
-              </Link>
+              {user ? (
+                <Link
+                  href="/order?plan=student"
+                  className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-md group-hover:bg-[#0064D0] group-hover:text-white"
+                >
+                  Choose Plan
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('signup')}
+                  className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-md group-hover:bg-[#0064D0] group-hover:text-white cursor-pointer"
+                >
+                  Subscribe Plan
+                </button>
+              )}
             </div>
           </div>
         </PricingCard3D>
@@ -136,12 +149,22 @@ export default function PackagesSection() {
             </div>
 
             <div className="pt-8" style={{ transform: 'translateZ(25px)' }}>
-              <Link
-                href="/order?plan=family"
-                className="w-full py-4 bg-[#0064D0] hover:bg-[#0052ad] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-xl shadow-[#0064D0]/30 hover:shadow-[#0064D0]/50"
-              >
-                Choose Plan
-              </Link>
+              {user ? (
+                <Link
+                  href="/order?plan=family"
+                  className="w-full py-4 bg-[#0064D0] hover:bg-[#0052ad] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-xl shadow-[#0064D0]/30 hover:shadow-[#0064D0]/50"
+                >
+                  Choose Plan
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('signup')}
+                  className="w-full py-4 bg-[#0064D0] hover:bg-[#0052ad] text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-xl shadow-[#0064D0]/30 hover:shadow-[#0064D0]/50 cursor-pointer"
+                >
+                  Subscribe Plan
+                </button>
+              )}
             </div>
           </div>
         </PricingCard3D>
@@ -174,13 +197,24 @@ export default function PackagesSection() {
             </div>
 
             <div className="pt-8" style={{ transform: 'translateZ(20px)' }}>
-              <Link
-                href="/order?plan=corporate"
-                className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-md group-hover:bg-[#0064D0] group-hover:text-white"
-              >
-                Choose Plan
-              </Link>
+              {user ? (
+                <Link
+                  href="/order?plan=corporate"
+                  className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-md group-hover:bg-[#0064D0] group-hover:text-white"
+                >
+                  Choose Plan
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('signup')}
+                  className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] inline-flex items-center justify-center transition-all duration-300 shadow-md group-hover:bg-[#0064D0] group-hover:text-white cursor-pointer"
+                >
+                  Subscribe Plan
+                </button>
+              )}
             </div>
+
           </div>
         </PricingCard3D>
 

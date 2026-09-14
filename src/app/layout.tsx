@@ -3,11 +3,13 @@ import { VisualEditing } from 'next-sanity/visual-editing';
 import { draftMode } from 'next/headers';
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/auth';
 import { CartProvider } from '@/context/cart';
 import { LanguageProvider } from '@/context/language';
+import AuthModal from '@/components/auth-modal';
 
 const velocitySans = localFont({
   src: '../fonts/Velocity-Sans.otf',
@@ -43,6 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <AuthProvider>
               <CartProvider>
                 {children}
+                <AuthModal />
                 <SanityLive />
                 {isDraftMode && <VisualEditing />}
                 <Script id="tawk-to" strategy="lazyOnload">

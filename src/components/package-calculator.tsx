@@ -1,16 +1,18 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, animate, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight, Sparkles, Check, Droplets, SlidersHorizontal, Calculator } from 'lucide-react'
+
+import OrderModal from '@/components/order-modal'
 
 // CMS / Admin Configurable Pricing Data Structure
 const PRICING_CONFIG = {
   basePricePer19LBottle: 320,
   locations: [
     { id: 'lahore', name: 'Lahore', deliveryFee: 100 },
-    { id: 'islamabad', name: 'Islamabad', deliveryFee: 100 },
+    { id: 'islamabad', name: 'Islamabad / Rawalpindi', deliveryFee: 100 },
     { id: 'rawalpindi', name: 'Rawalpindi', deliveryFee: 100 },
     { id: 'sialkot', name: 'Sialkot', deliveryFee: 120 },
     { id: 'other', name: 'Other', deliveryFee: 150 },
@@ -94,7 +96,6 @@ function TiltCard({ children, className = '', floating = false }: { children: Re
         whileHover={{ scale: 1.01 }}
         className={`relative h-full w-full overflow-hidden transition-all duration-300 ${className}`}
       >
-        {/* Interactive Configurator Subtle Brand Water Texture Layer (pattern-02.svg) — Shows only on hover */}
         <div
           className={`pointer-events-none absolute inset-0 bg-cover bg-center mix-blend-multiply dark:mix-blend-screen transition-opacity duration-500 rounded-2xl z-0 transform-gpu will-change-transform ${isHovered ? 'opacity-[0.015] dark:opacity-[0.04]' : 'opacity-0'
             }`}
@@ -117,6 +118,31 @@ export default function PackageCalculator() {
   const [months, setMonths] = useState<number>(6)
   const [customerTypeId, setCustomerTypeId] = useState<string>('family')
   const [locationId, setLocationId] = useState<string>('lahore')
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
+
+  // Mobile Slide State
+  const [activeSlide, setActiveSlide] = useState<number>(0)
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  const handleScroll = () => {
+    if (!sliderRef.current) return
+    const scrollLeft = sliderRef.current.scrollLeft
+    const width = sliderRef.current.clientWidth
+    if (width > 0) {
+      const index = Math.round(scrollLeft / width)
+      setActiveSlide(index)
+    }
+  }
+
+  const scrollToSlide = (index: number) => {
+    setActiveSlide(index)
+    if (!sliderRef.current) return
+    const width = sliderRef.current.clientWidth
+    sliderRef.current.scrollTo({
+      left: index * width,
+      behavior: 'smooth',
+    })
+  }
 
   // Config lookup
   const selectedFreq = PRICING_CONFIG.frequencies.find((f) => f.id === frequencyId) || PRICING_CONFIG.frequencies[1]
@@ -145,7 +171,7 @@ export default function PackageCalculator() {
       {/* Glassmorphism Background Ambient Glow Orbs */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] bg-[#0064D0]/10 dark:bg-blue-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
 
-      <div className="relative z-10 space-y-12">
+      <div className="relative z-10 space-y-8 sm:space-y-12">
         {/* Animated Title Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -166,18 +192,50 @@ export default function PackageCalculator() {
           </p>
         </motion.div>
 
-        {/* 50/50 3D CONFIGURATOR GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
+        {/* MOBILE SLIDE TOGGLE TABS (Only visible on mobile/tablet below lg) */}
+        <div className="flex lg:hidden justify-center items-center gap-2 p-1.5 bg-zinc-200/70 dark:bg-slate-800/80 rounded-2xl max-w-xs mx-auto shadow-inner">
+          <button
+            type="button"
+            onClick={() => scrollToSlide(0)}
+            className={`flex-1 py-2 px-3 text-xs font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 ${
+              activeSlide === 0
+                ? 'bg-[#0064D0] text-white shadow-md shadow-[#0064D0]/30'
+                : 'text-zinc-600 dark:text-slate-300 hover:text-zinc-900 dark:hover:text-white'
+            }`}
+          >
+            <SlidersHorizontal size={13} />
+            <span>1. Configure</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollToSlide(1)}
+            className={`flex-1 py-2 px-3 text-xs font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 ${
+              activeSlide === 1
+                ? 'bg-[#0064D0] text-white shadow-md shadow-[#0064D0]/30'
+                : 'text-zinc-600 dark:text-slate-300 hover:text-zinc-900 dark:hover:text-white'
+            }`}
+          >
+            <Sparkles size={13} />
+            <span>2. Summary</span>
+          </button>
+        </div>
 
-          {/* LEFT PANEL: INTERACTIVE CONTROLS (Span 6) */}
+        {/* MOBILE SWIPEABLE CAROUSEL & DESKTOP 50/50 GRID */}
+        <div
+          ref={sliderRef}
+          onScroll={handleScroll}
+          className="flex lg:grid lg:grid-cols-12 overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none gap-4 lg:gap-10 items-stretch pb-4 lg:pb-0 scrollbar-none transition-all duration-300"
+        >
+
+          {/* LEFT PANEL: INTERACTIVE CONTROLS (Slide 1 on Mobile) */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, type: 'spring', stiffness: 200, damping: 20 }}
-            className="lg:col-span-6 h-full"
+            className="w-[88vw] sm:w-[85vw] lg:w-auto shrink-0 lg:shrink snap-center lg:col-span-6 h-full"
           >
-            <TiltCard className="bg-zinc-50/90 dark:bg-[#162447]/95 backdrop-blur-xl p-6 sm:p-8 lg:p-10 rounded-2xl border border-zinc-200/80 dark:border-slate-700/60 shadow-xl shadow-sky-950/5 hover:shadow-2xl hover:shadow-[#0064D0]/10 flex flex-col justify-between space-y-6 sm:space-y-8">
+            <TiltCard className="bg-zinc-50/90 dark:bg-[#162447]/95 backdrop-blur-xl p-5 sm:p-8 lg:p-10 rounded-2xl border border-zinc-200/80 dark:border-slate-700/60 shadow-xl shadow-sky-950/5 hover:shadow-2xl hover:shadow-[#0064D0]/10 flex flex-col justify-between space-y-6 sm:space-y-8">
 
               {/* Variable 1: Number of Bottles */}
               <div className="space-y-3">
@@ -299,15 +357,15 @@ export default function PackageCalculator() {
             </TiltCard>
           </motion.div>
 
-          {/* RIGHT PANEL: LIVE 3D SUMMARY RESULT CARD (Span 6) */}
+          {/* RIGHT PANEL: LIVE 3D SUMMARY RESULT CARD (Slide 2 on Mobile) */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, type: 'spring', stiffness: 200, damping: 20 }}
-            className="lg:col-span-6 h-full"
+            className="w-[88vw] sm:w-[85vw] lg:w-auto shrink-0 lg:shrink snap-center lg:col-span-6 h-full"
           >
-            <TiltCard floating className="bg-white dark:bg-[#162447] p-6 sm:p-8 lg:p-10 rounded-2xl border-2 border-[#0064D0] shadow-2xl shadow-[#0064D0]/25 hover:shadow-[#0064D0]/45 flex flex-col justify-between space-y-6">
+            <TiltCard floating className="bg-white dark:bg-[#162447] p-5 sm:p-8 lg:p-10 rounded-2xl border-2 border-[#0064D0] shadow-2xl shadow-[#0064D0]/25 hover:shadow-[#0064D0]/45 flex flex-col justify-between space-y-6">
 
               <div className="space-y-6">
                 <div className="flex justify-between items-center border-b border-zinc-100 dark:border-slate-700 pb-4">
@@ -330,17 +388,17 @@ export default function PackageCalculator() {
                     transition={{ duration: 0.2 }}
                     className="space-y-1"
                   >
-                    <span className="text-3xl sm:text-4xl font-serif font-bold text-zinc-900 dark:text-white block tracking-wide">
+                    <span className="text-2xl sm:text-4xl font-serif font-bold text-zinc-900 dark:text-white block tracking-wide">
                       {bottlesPerDelivery} × 19L BOTTLES
                     </span>
-                    <span className="text-sm font-serif font-medium text-[#0064D0] block">
+                    <span className="text-xs sm:text-sm font-serif font-medium text-[#0064D0] block">
                       Approximately <CountUp value={totalLiters} /> LITERS ({totalBottles} bottles total)
                     </span>
                   </motion.div>
                 </AnimatePresence>
 
                 {/* Price Line Breakdown */}
-                <div className="p-6 bg-zinc-50/80 dark:bg-[#0b1329]/80 rounded-xl border border-zinc-200/60 dark:border-slate-800 space-y-3 text-xs font-light text-zinc-600 dark:text-slate-200 shadow-inner">
+                <div className="p-4 sm:p-6 bg-zinc-50/80 dark:bg-[#0b1329]/80 rounded-xl border border-zinc-200/60 dark:border-slate-800 space-y-3 text-xs font-light text-zinc-600 dark:text-slate-200 shadow-inner">
                   <div className="flex justify-between">
                     <span>Water ({totalBottles} x 19L Bottles):</span>
                     <span className="font-semibold text-zinc-900 dark:text-white">PKR <CountUp value={subtotal} /></span>
@@ -354,8 +412,8 @@ export default function PackageCalculator() {
                     <span>- PKR <CountUp value={discountAmount} /></span>
                   </div>
                   <div className="pt-3 border-t border-zinc-200/60 dark:border-slate-800 flex justify-between items-baseline">
-                    <span className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">TOTAL:</span>
-                    <span className="text-2xl sm:text-3xl font-serif font-bold text-[#0064D0]">
+                    <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">TOTAL:</span>
+                    <span className="text-xl sm:text-3xl font-serif font-bold text-[#0064D0]">
                       PKR <CountUp value={estimatedTotal} />
                     </span>
                   </div>
@@ -371,19 +429,20 @@ export default function PackageCalculator() {
               {/* Action Buttons */}
               <div className="space-y-3 pt-2">
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href={`/order?bottles=${bottlesPerDelivery}&freq=${frequencyId}&type=${customerTypeId}&city=${locationId}`}
-                    className="w-full py-4 bg-[#0064D0] hover:bg-[#0052ad] text-white rounded-xl font-bold text-xs uppercase tracking-[0.2em] inline-flex items-center justify-center space-x-2 transition-all duration-300 shadow-xl shadow-[#0064D0]/35 hover:shadow-[#0064D0]/50"
+                  <button
+                    type="button"
+                    onClick={() => setIsOrderModalOpen(true)}
+                    className="w-full py-3.5 sm:py-4 bg-[#0064D0] hover:bg-[#0052ad] text-white rounded-xl font-bold text-xs uppercase tracking-[0.2em] inline-flex items-center justify-center space-x-2 transition-all duration-300 shadow-xl shadow-[#0064D0]/35 hover:shadow-[#0064D0]/50 cursor-pointer"
                   >
                     <span>ORDER THIS PLAN</span>
                     <ArrowRight size={14} />
-                  </Link>
+                  </button>
                 </motion.div>
 
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     href="/contact"
-                    className="w-full py-3.5 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.18em] inline-flex items-center justify-center transition-all duration-300 text-center"
+                    className="w-full py-3 bg-zinc-100 dark:bg-white dark:text-black hover:dark:bg-slate-100 text-zinc-900 rounded-xl text-[10px] font-bold uppercase tracking-[0.18em] inline-flex items-center justify-center transition-all duration-300 text-center"
                   >
                     Talk to WATLYS
                   </Link>
@@ -394,7 +453,40 @@ export default function PackageCalculator() {
           </motion.div>
 
         </div>
+
+        {/* MOBILE SLIDE DOT INDICATORS (Only visible on mobile/tablet below lg) */}
+        <div className="flex lg:hidden justify-center items-center gap-2 pt-1">
+          <button
+            type="button"
+            onClick={() => scrollToSlide(0)}
+            aria-label="Slide 1"
+            className={`h-2 rounded-full transition-all duration-300 ${
+              activeSlide === 0 ? 'w-6 bg-[#0064D0]' : 'w-2 bg-zinc-300 dark:bg-slate-700'
+            }`}
+          />
+          <button
+            type="button"
+            onClick={() => scrollToSlide(1)}
+            aria-label="Slide 2"
+            className={`h-2 rounded-full transition-all duration-300 ${
+              activeSlide === 1 ? 'w-6 bg-[#0064D0]' : 'w-2 bg-zinc-300 dark:bg-slate-700'
+            }`}
+          />
+        </div>
       </div>
+
+      {/* DYNAMIC CHECKOUT ORDER MODAL */}
+      <OrderModal
+        isOpen={isOrderModalOpen}
+        onClose={() => setIsOrderModalOpen(false)}
+        initialPackageDetails={{
+          bottleQty: bottlesPerDelivery,
+          frequency: selectedFreq.name,
+          customerSegment: selectedType.name,
+          city: selectedLoc.name,
+          months,
+        }}
+      />
     </section>
   )
 }
